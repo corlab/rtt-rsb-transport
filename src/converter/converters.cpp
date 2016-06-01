@@ -37,11 +37,15 @@
 namespace rtt_rsbcomm {
 namespace converter {
 
-void registerConverters() {
+template <typename T, typename I>
+void registerConverter() {
     rsb::converter::converterRepository<std::string>()->registerConverter
-        (rsb::converter::Converter<std::string>::Ptr
-         (new Converter<rstrt::kinematics::JointAngles, 
-                        rst::kinematics::JointAngles>()));
+        (rsb::converter::Converter<std::string>::Ptr(new Converter<T, I>()));
+}
+
+void registerConverters() {
+    registerConverter<rstrt::kinematics::JointAngles,
+                      rst::kinematics::JointAngles>();
 }
 
 }
