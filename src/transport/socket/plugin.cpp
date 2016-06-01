@@ -28,6 +28,7 @@
 #include <rtt/types/TypekitPlugin.hpp>
 
 #include <rst-rt/kinematics/JointAngles.hpp>
+#include <rst-rt/dynamics/JointTorques.hpp>
 
 #include "../../constants.hpp"
 
@@ -57,6 +58,9 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         if (name == "rstrt.kinematics.JointAngles") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::kinematics::JointAngles>());
+        } else if (name == "rstrt.dynamics.JointTorques") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::dynamics::JointTorques>());
         } else {
             return false;
         }

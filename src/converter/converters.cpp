@@ -60,6 +60,26 @@ public:
     }
 };
 
+template<>
+class Helper<rstrt::dynamics::JointTorques,
+             rst::dynamics::JointTorques> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::dynamics::JointTorques> datum,
+                          boost::shared_ptr<rst::dynamics::JointTorques>   intermediate) {
+        for (int i = 0; i < datum->torques.size(); ++i) {
+            intermediate->add_torques(datum->torques(i));
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::dynamics::JointTorques>   intermediate,
+                            boost::shared_ptr<rstrt::dynamics::JointTorques> datum) {
+        datum->torques.resize(intermediate->torques().size()) ;
+        for (int i = 0; i < intermediate->torques().size(); ++i) {
+            datum->torques(i) = intermediate->torques().Get(i);
+        }
+    }
+};
+
 template <typename T, typename I>
 void registerConverter() {
     rsb::converter::converterRepository<std::string>()->registerConverter
@@ -69,6 +89,8 @@ void registerConverter() {
 void registerConverters() {
     registerConverter<rstrt::kinematics::JointAngles,
                       rst::kinematics::JointAngles>();
+    registerConverter<rstrt::dynamics::JointTorques,
+                      rst::dynamics::JointTorques>();
 }
 
 }
