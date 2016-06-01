@@ -90,8 +90,7 @@ bool loadRTTPlugin(RTT::TaskContext* tc) {
         rtt_rsbcomm::transport::socket::TransportPlugin* plugin
             = new rtt_rsbcomm::transport::socket::TransportPlugin();
         RTT::types::TypekitRepository::Import(plugin);
-        plugin->registerConverters();
-        return true;
+        return plugin->registerConverters();
     }
     return false;
 }
