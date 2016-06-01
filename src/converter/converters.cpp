@@ -26,6 +26,8 @@
 
 #include "converters.hpp"
 
+#include <rtt/Logger.hpp>
+
 #include <rsb/converter/Repository.h>
 #include <rsb/converter/Converter.h>
 
@@ -160,8 +162,16 @@ public:
 
 template <typename T, typename I>
 void registerConverter() {
-    rsb::converter::converterRepository<std::string>()->registerConverter
-        (rsb::converter::Converter<std::string>::Ptr(new Converter<T, I>()));
+    RTT::Logger::In in("rtt_rsbcomm::transport::socket::registerConverter");
+
+    rsb::converter::Converter<std::string>::Ptr
+        converter(new Converter<T, I>());
+
+    RTT::log(RTT::Debug)
+        << "Registering converter " << converter << RTT::endlog();
+
+    rsb::converter::converterRepository<std::string>()
+        ->registerConverter (converter);
 }
 
 void registerConverters() {
