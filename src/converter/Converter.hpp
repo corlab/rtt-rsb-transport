@@ -34,39 +34,49 @@ namespace converter {
 
 template <typename T,
           typename I>
+class Helper {
+public:
+    void copyForSerialize(boost::shared_ptr<T> datum,
+                          boost::shared_ptr<I> intermediate);
+
+    void copyForDeSerialize(boost::shared_ptr<I> intermediate,
+                            boost::shared_ptr<I> datum);
+
+};
+
+template <typename T,
+          typename I>
 class Converter: public rsb::converter::Converter<std::string> {
 public:
     Converter()
         : rsb::converter::Converter<std::string>
-        (rsc::runtime::typeName<T>(), ".rst.kinematics.JointAngles", true) {
+        (rsc::runtime::typeName<T>(),
+         rsb::converter::ProtocolBufferConverter<I>().getWireSchema(),
+         true) {
     }
 
     std::string serialize(const rsb::AnnotatedData& data,
                           std::string&              wire) {
         boost::shared_ptr<T> temp(boost::static_pointer_cast<T>(data.second));
         boost::shared_ptr<I> datum(new I());
-        for (int i = 0; i < temp->angles.size(); ++i) {
-            datum->add_angles(temp->angles(i));
-        }
-        return converter.serialize
+        this->helper.copyForSerialize(temp, datum);
+        return this->converter.serialize
             (rsb::AnnotatedData(rsc::runtime::typeName<I>(), datum), wire);
     }
 
     rsb::AnnotatedData deserialize(const std::string& wireSchema,
                                    const std::string& wire) {
         rsb::AnnotatedData intermediate
-            = converter.deserialize(wireSchema, wire);
+            = this->converter.deserialize(wireSchema, wire);
         boost::shared_ptr<I> temp(boost::static_pointer_cast<I>
                                   (intermediate.second));
         boost::shared_ptr<T> datum(new T());
-        datum->angles.resize(temp->angles().size()) ;
-        for (int i = 0; i < temp->angles().size(); ++i) {
-            datum->angles(i) = temp->angles().Get(i);
-        }
+        this->helper.copyForDeSerialize(temp, datum);
         return rsb::AnnotatedData(intermediate.first, datum);
     }
 private:
     rsb::converter::ProtocolBufferConverter<I> converter;
+    Helper<T, I>                               helper;
 };
 
 }

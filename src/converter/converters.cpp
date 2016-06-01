@@ -32,10 +32,33 @@
 #include <rst/kinematics/JointAngles.pb.h>
 #include <rst-rt/kinematics/JointAngles.hpp>
 
+#include <rst/dynamics/JointTorques.pb.h>
+#include <rst-rt/dynamics/JointTorques.hpp>
+
 #include "Converter.hpp"
 
 namespace rtt_rsbcomm {
 namespace converter {
+
+template<>
+class Helper<rstrt::kinematics::JointAngles,
+             rst::kinematics::JointAngles> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::kinematics::JointAngles> datum,
+                          boost::shared_ptr<rst::kinematics::JointAngles>   intermediate) {
+        for (int i = 0; i < datum->angles.size(); ++i) {
+            intermediate->add_angles(datum->angles(i));
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::kinematics::JointAngles>   intermediate,
+                            boost::shared_ptr<rstrt::kinematics::JointAngles> datum) {
+        datum->angles.resize(intermediate->angles().size()) ;
+        for (int i = 0; i < intermediate->angles().size(); ++i) {
+            datum->angles(i) = intermediate->angles().Get(i);
+        }
+    }
+};
 
 template <typename T, typename I>
 void registerConverter() {
