@@ -35,6 +35,9 @@
 #include <rst/kinematics/JointVelocities.pb.h>
 #include <rst-rt/kinematics/JointVelocities.hpp>
 
+#include <rst/kinematics/JointAccelerations.pb.h>
+#include <rst-rt/kinematics/JointAccelerations.hpp>
+
 #include <rst/dynamics/JointTorques.pb.h>
 #include <rst-rt/dynamics/JointTorques.hpp>
 
@@ -84,6 +87,26 @@ public:
 };
 
 template<>
+class Helper<rstrt::kinematics::JointAccelerations,
+             rst::kinematics::JointAccelerations> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::kinematics::JointAccelerations> datum,
+                          boost::shared_ptr<rst::kinematics::JointAccelerations>   intermediate) {
+        for (int i = 0; i < datum->accelerations.size(); ++i) {
+            intermediate->add_accelerations(datum->accelerations(i));
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::kinematics::JointAccelerations>   intermediate,
+                            boost::shared_ptr<rstrt::kinematics::JointAccelerations> datum) {
+        datum->accelerations.resize(intermediate->accelerations().size()) ;
+        for (int i = 0; i < intermediate->accelerations().size(); ++i) {
+            datum->accelerations(i) = intermediate->accelerations().Get(i);
+        }
+    }
+};
+
+template<>
 class Helper<rstrt::dynamics::JointTorques,
              rst::dynamics::JointTorques> {
 public:
@@ -114,6 +137,8 @@ void registerConverters() {
                       rst::kinematics::JointAngles>();
     registerConverter<rstrt::kinematics::JointVelocities,
                       rst::kinematics::JointVelocities>();
+    registerConverter<rstrt::kinematics::JointAccelerations,
+                      rst::kinematics::JointAccelerations>();
     registerConverter<rstrt::dynamics::JointTorques,
                       rst::dynamics::JointTorques>();
 }
