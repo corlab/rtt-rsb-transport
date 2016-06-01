@@ -31,6 +31,7 @@
 #include <rst-rt/kinematics/JointVelocities.hpp>
 #include <rst-rt/kinematics/JointAccelerations.hpp>
 #include <rst-rt/dynamics/JointTorques.hpp>
+#include <rst-rt/dynamics/JointImpedance.hpp>
 
 #include "../../constants.hpp"
 
@@ -69,6 +70,9 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.dynamics.JointTorques") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::dynamics::JointTorques>());
+        } else if (name == "rstrt.dynamics.JointImpedance") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::dynamics::JointImpedance>());
         } else {
             return false;
         }

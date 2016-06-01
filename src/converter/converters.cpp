@@ -41,6 +41,9 @@
 #include <rst/dynamics/JointTorques.pb.h>
 #include <rst-rt/dynamics/JointTorques.hpp>
 
+#include <rst/dynamics/JointImpedance.pb.h>
+#include <rst-rt/dynamics/JointImpedance.hpp>
+
 #include "Converter.hpp"
 
 namespace rtt_rsbcomm {
@@ -126,6 +129,35 @@ public:
     }
 };
 
+template<>
+class Helper<rstrt::dynamics::JointImpedance,
+             rst::dynamics::JointImpedance> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::dynamics::JointImpedance> datum,
+                          boost::shared_ptr<rst::dynamics::JointImpedance>   intermediate) {
+        for (int i = 0; i < datum->stiffness.size(); ++i) {
+            intermediate->add_stiffness(datum->stiffness(i));
+        }
+
+        for (int i = 0; i < datum->damping.size(); ++i) {
+            intermediate->add_damping(datum->damping(i));
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::dynamics::JointImpedance>   intermediate,
+                            boost::shared_ptr<rstrt::dynamics::JointImpedance> datum) {
+        datum->stiffness.resize(intermediate->stiffness().size()) ;
+        for (int i = 0; i < intermediate->stiffness().size(); ++i) {
+            datum->stiffness(i) = intermediate->stiffness().Get(i);
+        }
+
+        datum->damping.resize(intermediate->damping().size()) ;
+        for (int i = 0; i < intermediate->damping().size(); ++i) {
+            datum->damping(i) = intermediate->damping().Get(i);
+        }
+    }
+};
+
 template <typename T, typename I>
 void registerConverter() {
     rsb::converter::converterRepository<std::string>()->registerConverter
@@ -141,6 +173,8 @@ void registerConverters() {
                       rst::kinematics::JointAccelerations>();
     registerConverter<rstrt::dynamics::JointTorques,
                       rst::dynamics::JointTorques>();
+    registerConverter<rstrt::dynamics::JointImpedance,
+                      rst::dynamics::JointImpedance>();
 }
 
 }
