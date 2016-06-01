@@ -58,6 +58,38 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
     }
 
     bool registerTransport(std::string name, RTT::types::TypeInfo* ti) {
+        // Primitive types.
+        /*if (name == "void") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<void>());
+        } else*/ if (name == "bool") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<bool>());
+        } else if (name == "char") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<char>());
+        } else if (name == "int") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<int>());
+        } else if (name == "uint") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<unsigned int>());
+        } /*else if (name == "double") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<double>());
+        } else if (name == "float") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<float>());
+        }*/
+        else if (name == "string") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<std::string>());
+        } /*else if (name == "rt_string") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<unsigned int>());
+        }*/
+
+        // RST-RT types.
         if (name == "rstrt.kinematics.JointAngles") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::kinematics::JointAngles>());
