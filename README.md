@@ -12,6 +12,23 @@ The code is heavily based on the rtt\_roscomm plugin in the
 [rtt\_ros\_integration repository](https://github.com/orocos/rtt_ros_integration)
 .
 
+# Supported Types
+
+| [RSB](https://code.cor-lab.org/projects/rsb) Type | [RTT](http://www.orocos.org/rtt) Type    |
+|---------------------------------------------------|------------------------------------------|
+| `rst.geometry.Translation`                        | `rstrt::geometry::Translation`           |
+| `rst.kinematics.JointAngles`                      | `rstrt::kinematics::JointAngles`         |
+| `rst.kinematics.JointVelocities`                  | `rstrt::kinematics::JointVelocities`     |
+| `rst.kinematics.JointAccelerations`               | `rstrt::kinematics::JointAccelerations`  |
+| `rst.dynamics.JointTorques`                       | `rstrt::dynamics::JointTorques`          |
+| `rst.dynamics.JointImpedance`                     | `rstrt::dynamics::JointImpedance`        |
+| `bool`                                            | `bool`                                   |
+| `int64`                                           | `int`                                    |
+| `uint64`                                          | `uint`                                   |
+| `double`                                          | `double`                                 |
+| `float`                                           | `float`                                  |
+| `utf-8-string`                                    | `string`                                 |
+
 # Plugins
 
 ## RSB Scopes
