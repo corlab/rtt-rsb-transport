@@ -27,9 +27,12 @@
 #include <rtt/types/TransportPlugin.hpp>
 #include <rtt/types/TypekitPlugin.hpp>
 
+#include <rst-rt/geometry/Translation.hpp>
+
 #include <rst-rt/kinematics/JointAngles.hpp>
 #include <rst-rt/kinematics/JointVelocities.hpp>
 #include <rst-rt/kinematics/JointAccelerations.hpp>
+
 #include <rst-rt/dynamics/JointTorques.hpp>
 #include <rst-rt/dynamics/JointImpedance.hpp>
 
@@ -90,6 +93,11 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         }*/
 
         // RST-RT types.
+        if (name == "rstrt.geometry.Translation") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::geometry::Translation>());
+        }
+
         if (name == "rstrt.kinematics.JointAngles") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::kinematics::JointAngles>());
@@ -99,7 +107,9 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.kinematics.JointAccelerations") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::kinematics::JointAccelerations>());
-        } else if (name == "rstrt.dynamics.JointTorques") {
+        }
+
+        if (name == "rstrt.dynamics.JointTorques") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::dynamics::JointTorques>());
         } else if (name == "rstrt.dynamics.JointImpedance") {

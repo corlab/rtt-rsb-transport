@@ -31,6 +31,9 @@
 #include <rsb/converter/Repository.h>
 #include <rsb/converter/Converter.h>
 
+#include <rst/geometry/Translation.pb.h>
+#include <rst-rt/geometry/Translation.hpp>
+
 #include <rst/kinematics/JointAngles.pb.h>
 #include <rst-rt/kinematics/JointAngles.hpp>
 
@@ -50,6 +53,31 @@
 
 namespace rtt_rsbcomm {
 namespace converter {
+
+template<>
+class Helper<rstrt::geometry::Translation,
+             rst::geometry::Translation> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::geometry::Translation> datum,
+                          boost::shared_ptr<rst::geometry::Translation>   intermediate) {
+        intermediate->set_x(datum->translation(0));
+        intermediate->set_y(datum->translation(1));
+        intermediate->set_z(datum->translation(2));
+        if (!datum->frameId.empty()) {
+            intermediate->set_frame_id(datum->frameId);
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::geometry::Translation>   intermediate,
+                            boost::shared_ptr<rstrt::geometry::Translation> datum) {
+        datum->translation(0) = intermediate->x();
+        datum->translation(1) = intermediate->y();
+        datum->translation(2) = intermediate->z();
+        if (intermediate->has_frame_id()) {
+            datum->frameId = intermediate->frame_id();
+        }
+    }
+};
 
 template<>
 class Helper<rstrt::kinematics::JointAngles,
@@ -175,12 +203,16 @@ void registerConverter() {
 }
 
 void registerConverters() {
+    registerConverter<rstrt::geometry::Translation,
+                      rst::geometry::Translation>();
+
     registerConverter<rstrt::kinematics::JointAngles,
                       rst::kinematics::JointAngles>();
     registerConverter<rstrt::kinematics::JointVelocities,
                       rst::kinematics::JointVelocities>();
     registerConverter<rstrt::kinematics::JointAccelerations,
                       rst::kinematics::JointAccelerations>();
+
     registerConverter<rstrt::dynamics::JointTorques,
                       rst::dynamics::JointTorques>();
     registerConverter<rstrt::dynamics::JointImpedance,
