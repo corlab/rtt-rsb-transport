@@ -74,13 +74,13 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "uint") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<unsigned int>());
-        } /*else if (name == "double") {
+        } else if (name == "double") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<double>());
         } else if (name == "float") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<float>());
-        }*/
+        }
         else if (name == "string") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<std::string>());
