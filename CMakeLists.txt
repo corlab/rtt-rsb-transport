@@ -26,7 +26,7 @@ project(rtt_rsbcomm CXX)
 
 # Dependencies
 
-find_package(OROCOS-RTT 2.0.0  COMPONENTS rtt-scripting rtt-marshalling)
+find_package(OROCOS-RTT REQUIRED)
 include(${OROCOS-RTT_USE_FILE_PATH}/UseOROCOS-RTT.cmake)
 
 find_package(RSB REQUIRED)
