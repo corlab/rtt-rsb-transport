@@ -37,7 +37,8 @@ orocos_typekit(rtt-rsb-socket-transport
 target_link_libraries(rtt-rsb-socket-transport
                       ${RSB_LIBRARIES}
                       ${RST-RT_LIBRARIES}
-                      ${RST_LIBRARIES})
+                      ${RST_LIBRARIES}
+                      ${RSTSANDBOX_LIBRARIES})
 
 # Scope service plugin
 

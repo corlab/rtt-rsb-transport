@@ -41,10 +41,10 @@ add_definitions(${RST-RT_CXX_FLAGS})
 
 link_directories(${RST-RT_LIBRARY_DIRS})
 
-find_package(RST REQUIRED)
+find_package(RST REQUIRED COMPONENTS sandbox)
 
-include_directories(${RST_INCLUDE_DIRS})
-add_definitions(${RST_CFLAGS})
+include_directories(BEFORE SYSTEM ${RST_INCLUDE_DIRS})
+add_definitions(${RST_CFLAGS} ${RSTSANDBOX_CFLAGS})
 
 link_directories(${RST_LIBRARY_DIRS})
 
