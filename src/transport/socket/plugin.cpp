@@ -36,6 +36,8 @@
 #include <rst-rt/dynamics/JointTorques.hpp>
 #include <rst-rt/dynamics/JointImpedance.hpp>
 
+#include <rst-rt/robot/JointState.hpp>
+
 #include "../../constants.hpp"
 
 #include "../../converter/converters.hpp"
@@ -115,6 +117,11 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.dynamics.JointImpedance") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::dynamics::JointImpedance>());
+        }
+
+        if (name == "rstrt.robot.JointState") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::robot::JointState>());
         } else {
             return false;
         }

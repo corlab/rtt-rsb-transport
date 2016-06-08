@@ -49,6 +49,9 @@
 #include <rst/dynamics/JointImpedance.pb.h>
 #include <rst-rt/dynamics/JointImpedance.hpp>
 
+#include <rst/robot/JointState.pb.h>
+#include <rst-rt/robot/JointState.hpp>
+
 #include "Converter.hpp"
 
 namespace rtt_rsbcomm {
@@ -188,6 +191,49 @@ public:
     }
 };
 
+template<>
+class Helper<rstrt::robot::JointState,
+             rst::robot::JointState> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::robot::JointState> datum,
+                          boost::shared_ptr<rst::robot::JointState>   intermediate) {
+        // Angles
+        for (int i = 0; i < datum->angles.size(); ++i) {
+            intermediate->mutable_angles()->add_angles(datum->angles(i));
+        }
+        // Velocities
+        for (int i = 0; i < datum->velocities.size(); ++i) {
+            intermediate->mutable_velocities()->add_velocities(datum->velocities(i));
+        }
+        // Torques
+        for (int i = 0; i < datum->torques.size(); ++i) {
+            intermediate->mutable_torques()->add_torques(datum->torques(i));
+        }
+
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::robot::JointState>   intermediate,
+                            boost::shared_ptr<rstrt::robot::JointState> datum) {
+        // Angles
+        datum->angles.resize(intermediate->angles().angles().size()) ;
+        for (int i = 0; i < intermediate->angles().angles().size(); ++i) {
+            datum->angles(i) = intermediate->angles().angles().Get(i);
+        }
+
+        // Velocities
+        datum->velocities.resize(intermediate->velocities().velocities().size()) ;
+        for (int i = 0; i < intermediate->velocities().velocities().size(); ++i) {
+            datum->velocities(i) = intermediate->velocities().velocities().Get(i);
+        }
+        // Torques
+        datum->torques.resize(intermediate->torques().torques().size()) ;
+        for (int i = 0; i < intermediate->torques().torques().size(); ++i) {
+            datum->torques(i) = intermediate->torques().torques().Get(i);
+        }
+
+    }
+};
+
 template <typename T, typename I>
 void registerConverter() {
     RTT::Logger::In in("rtt_rsbcomm::transport::socket::registerConverter");
@@ -217,6 +263,9 @@ void registerConverters() {
                       rst::dynamics::JointTorques>();
     registerConverter<rstrt::dynamics::JointImpedance,
                       rst::dynamics::JointImpedance>();
+
+    registerConverter<rstrt::robot::JointState,
+                      rst::robot::JointState>();
 }
 
 }
