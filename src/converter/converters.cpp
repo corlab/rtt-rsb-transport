@@ -43,6 +43,9 @@
 #include <rst/kinematics/JointAccelerations.pb.h>
 #include <rst-rt/kinematics/JointAccelerations.hpp>
 
+#include <rst/kinematics/JointJerks.pb.h>
+#include <rst-rt/kinematics/JointJerks.hpp>
+
 #include <rst/dynamics/JointTorques.pb.h>
 #include <rst-rt/dynamics/JointTorques.hpp>
 
@@ -51,6 +54,9 @@
 
 #include <rst/robot/JointState.pb.h>
 #include <rst-rt/robot/JointState.hpp>
+
+#include <rst/robot/Weights.pb.h>
+#include <rst-rt/robot/Weights.hpp>
 
 #include "Converter.hpp"
 
@@ -138,6 +144,26 @@ public:
         datum->accelerations.resize(intermediate->accelerations().size()) ;
         for (int i = 0; i < intermediate->accelerations().size(); ++i) {
             datum->accelerations(i) = intermediate->accelerations().Get(i);
+        }
+    }
+};
+
+template<>
+class Helper<rstrt::kinematics::JointJerks,
+             rst::kinematics::JointJerks> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::kinematics::JointJerks> datum,
+                          boost::shared_ptr<rst::kinematics::JointJerks>   intermediate) {
+        for (int i = 0; i < datum->jerks.size(); ++i) {
+            intermediate->add_jerks(datum->jerks(i));
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::kinematics::JointJerks>   intermediate,
+                            boost::shared_ptr<rstrt::kinematics::JointJerks> datum) {
+        datum->jerks.resize(intermediate->jerks().size()) ;
+        for (int i = 0; i < intermediate->jerks().size(); ++i) {
+            datum->jerks(i) = intermediate->jerks().Get(i);
         }
     }
 };
@@ -234,6 +260,28 @@ public:
     }
 };
 
+template<>
+class Helper<rstrt::robot::Weights,
+             rst::robot::Weights> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::robot::Weights> datum,
+                          boost::shared_ptr<rst::robot::Weights>   intermediate) {
+        for (int i = 0; i < datum->weights.size(); ++i) {
+            intermediate->add_weights(datum->weights(i));
+        }
+
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::robot::Weights>   intermediate,
+                            boost::shared_ptr<rstrt::robot::Weights> datum) {
+        datum->weights.resize(intermediate->weights().size()) ;
+        for (int i = 0; i < intermediate->weights().size(); ++i) {
+            datum->weights(i) = intermediate->weights().Get(i);
+        }
+
+    }
+};
+
 template <typename T, typename I>
 void registerConverter() {
     RTT::Logger::In in("rtt_rsbcomm::transport::socket::registerConverter");
@@ -258,6 +306,8 @@ void registerConverters() {
                       rst::kinematics::JointVelocities>();
     registerConverter<rstrt::kinematics::JointAccelerations,
                       rst::kinematics::JointAccelerations>();
+    registerConverter<rstrt::kinematics::JointJerks,
+                      rst::kinematics::JointJerks>();
 
     registerConverter<rstrt::dynamics::JointTorques,
                       rst::dynamics::JointTorques>();
@@ -266,6 +316,8 @@ void registerConverters() {
 
     registerConverter<rstrt::robot::JointState,
                       rst::robot::JointState>();
+    registerConverter<rstrt::robot::Weights,
+                      rst::robot::Weights>();
 }
 
 }

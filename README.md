@@ -20,8 +20,11 @@ The code is heavily based on the rtt\_roscomm plugin in the
 | `rst.kinematics.JointAngles`                      | `rstrt::kinematics::JointAngles`         |
 | `rst.kinematics.JointVelocities`                  | `rstrt::kinematics::JointVelocities`     |
 | `rst.kinematics.JointAccelerations`               | `rstrt::kinematics::JointAccelerations`  |
+| `rst.kinematics.JointJerks`                       | `rstrt::kinematics::JointJerks`          |
 | `rst.dynamics.JointTorques`                       | `rstrt::dynamics::JointTorques`          |
 | `rst.dynamics.JointImpedance`                     | `rstrt::dynamics::JointImpedance`        |
+| `rst.robot.JointState`                            | `rstrt::robot::JointState`               |
+| `rst.robot.Weights`                               | `rstrt::robot::Weights`                  |
 | `bool`                                            | `bool`                                   |
 | `int64`                                           | `int`                                    |
 | `uint64`                                          | `uint`                                   |
