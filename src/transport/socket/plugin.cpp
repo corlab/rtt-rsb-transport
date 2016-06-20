@@ -32,11 +32,13 @@
 #include <rst-rt/kinematics/JointAngles.hpp>
 #include <rst-rt/kinematics/JointVelocities.hpp>
 #include <rst-rt/kinematics/JointAccelerations.hpp>
+#include <rst-rt/kinematics/JointJerks.hpp>
 
 #include <rst-rt/dynamics/JointTorques.hpp>
 #include <rst-rt/dynamics/JointImpedance.hpp>
 
 #include <rst-rt/robot/JointState.hpp>
+#include <rst-rt/robot/Weights.hpp>
 
 #include "../../constants.hpp"
 
@@ -109,6 +111,9 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.kinematics.JointAccelerations") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::kinematics::JointAccelerations>());
+        } else if (name == "rstrt.kinematics.JointJerks") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::kinematics::JointJerks>());
         }
 
         if (name == "rstrt.dynamics.JointTorques") {
@@ -122,6 +127,9 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         if (name == "rstrt.robot.JointState") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::robot::JointState>());
+        } else if (name == "rstrt.robot.Weights") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::robot::Weights>());
         } else {
             return false;
         }
