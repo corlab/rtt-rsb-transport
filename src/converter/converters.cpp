@@ -52,6 +52,15 @@
 #include <rst/dynamics/JointImpedance.pb.h>
 #include <rst-rt/dynamics/JointImpedance.hpp>
 
+#include <rst/dynamics/Forces.pb.h>
+#include <rst-rt/dynamics/Forces.hpp>
+
+#include <rst/dynamics/Torques.pb.h>
+#include <rst-rt/dynamics/Torques.hpp>
+
+#include <rst/dynamics/Wrench.pb.h>
+#include <rst-rt/dynamics/Wrench.hpp>
+
 #include <rst/robot/JointState.pb.h>
 #include <rst-rt/robot/JointState.hpp>
 
@@ -214,6 +223,75 @@ public:
         for (int i = 0; i < intermediate->damping().size(); ++i) {
             datum->damping(i) = intermediate->damping().Get(i);
         }
+    }
+};
+
+template<>
+class Helper<rstrt::dynamics::Forces,
+             rst::dynamics::Forces> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::dynamics::Forces> datum,
+                          boost::shared_ptr<rst::dynamics::Forces>   intermediate) {
+        intermediate->set_x(datum->forces(0));
+        intermediate->set_y(datum->forces(1));
+        intermediate->set_z(datum->forces(2));
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::dynamics::Forces>   intermediate,
+                            boost::shared_ptr<rstrt::dynamics::Forces> datum) {
+        datum->forces(0) = intermediate->x();
+        datum->forces(1) = intermediate->y();
+        datum->forces(2) = intermediate->z();
+    }
+};
+
+template<>
+class Helper<rstrt::dynamics::Torques,
+             rst::dynamics::Torques> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::dynamics::Torques> datum,
+                          boost::shared_ptr<rst::dynamics::Torques>   intermediate) {
+        intermediate->set_a(datum->torques(0));
+        intermediate->set_b(datum->torques(1));
+        intermediate->set_c(datum->torques(2));
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::dynamics::Torques>   intermediate,
+                            boost::shared_ptr<rstrt::dynamics::Torques> datum) {
+        datum->torques(0) = intermediate->a();
+        datum->torques(1) = intermediate->b();
+        datum->torques(2) = intermediate->c();
+    }
+};
+
+template<>
+class Helper<rstrt::dynamics::Wrench,
+             rst::dynamics::Wrench> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::dynamics::Wrench> datum,
+                          boost::shared_ptr<rst::dynamics::Wrench>   intermediate) {
+        // Forces
+        intermediate->mutable_forces()->set_x(datum->forces(0));
+        intermediate->mutable_forces()->set_y(datum->forces(1));
+        intermediate->mutable_forces()->set_z(datum->forces(2));
+
+        // Torques
+        intermediate->mutable_torques()->set_a(datum->torques(0));
+        intermediate->mutable_torques()->set_b(datum->torques(1));
+        intermediate->mutable_torques()->set_c(datum->torques(2));
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::dynamics::Wrench>   intermediate,
+                            boost::shared_ptr<rstrt::dynamics::Wrench> datum) {
+        // Forces
+    	datum->forces(0) = intermediate->forces().x();
+		datum->forces(1) = intermediate->forces().y();
+		datum->forces(2) = intermediate->forces().z();
+
+        // Torques
+		datum->torques(0) = intermediate->torques().a();
+		datum->torques(1) = intermediate->torques().b();
+		datum->torques(2) = intermediate->torques().c();
     }
 };
 

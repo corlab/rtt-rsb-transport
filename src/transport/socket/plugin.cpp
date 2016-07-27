@@ -36,6 +36,9 @@
 
 #include <rst-rt/dynamics/JointTorques.hpp>
 #include <rst-rt/dynamics/JointImpedance.hpp>
+#include <rst-rt/dynamics/Forces.hpp>
+#include <rst-rt/dynamics/Torques.hpp>
+#include <rst-rt/dynamics/Wrench.hpp>
 
 #include <rst-rt/robot/JointState.hpp>
 #include <rst-rt/robot/Weights.hpp>
@@ -122,6 +125,15 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.dynamics.JointImpedance") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::dynamics::JointImpedance>());
+        } else if (name == "rstrt.dynamics.Forces") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::dynamics::Forces>());
+        } else if (name == "rstrt.dynamics.Torques") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::dynamics::Torques>());
+        } else if (name == "rstrt.dynamics.Wrench") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::dynamics::Wrench>());
         }
 
         if (name == "rstrt.robot.JointState") {
