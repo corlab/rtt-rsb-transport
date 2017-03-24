@@ -34,6 +34,12 @@
 #include <rst/geometry/Translation.pb.h>
 #include <rst-rt/geometry/Translation.hpp>
 
+#include <rst/geometry/Rotation.pb.h>
+#include <rst-rt/geometry/Rotation.hpp>
+
+#include <rst/geometry/Pose.pb.h>
+#include <rst-rt/geometry/Pose.hpp>
+
 #include <rst/kinematics/JointAngles.pb.h>
 #include <rst-rt/kinematics/JointAngles.hpp>
 
@@ -42,6 +48,15 @@
 
 #include <rst/kinematics/JointAccelerations.pb.h>
 #include <rst-rt/kinematics/JointAccelerations.hpp>
+
+#include <rst/kinematics/LinearVelocities.pb.h>
+#include <rst-rt/kinematics/LinearVelocities.hpp>
+
+#include <rst/kinematics/AngularVelocities.pb.h>
+#include <rst-rt/geometry/AngularVelocity.hpp> //TODO change package in rst-rt
+
+#include <rst/kinematics/Twist.pb.h>
+#include <rst-rt/kinematics/Twist.hpp>
 
 #include <rst/kinematics/JointJerks.pb.h>
 #include <rst-rt/kinematics/JointJerks.hpp>
@@ -94,6 +109,74 @@ public:
         if (intermediate->has_frame_id()) {
             datum->frameId = intermediate->frame_id();
         }
+    }
+};
+
+template<>
+class Helper<rstrt::geometry::Rotation,
+             rst::geometry::Rotation> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::geometry::Rotation> datum,
+                          boost::shared_ptr<rst::geometry::Rotation>   intermediate) {
+        intermediate->set_qw(datum->rotation(0));
+        intermediate->set_qx(datum->rotation(1));
+        intermediate->set_qy(datum->rotation(2));
+        intermediate->set_qz(datum->rotation(3));
+        if (!datum->frameId.empty()) {
+            intermediate->set_frame_id(datum->frameId);
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::geometry::Rotation>   intermediate,
+                            boost::shared_ptr<rstrt::geometry::Rotation> datum) {
+        datum->rotation(0) = intermediate->qw();
+        datum->rotation(1) = intermediate->qx();
+        datum->rotation(2) = intermediate->qy();
+        datum->rotation(3) = intermediate->qz();
+        if (intermediate->has_frame_id()) {
+            datum->frameId = intermediate->frame_id();
+        }
+    }
+};
+
+template<>
+class Helper<rstrt::geometry::Pose,
+             rst::geometry::Pose> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::geometry::Pose> datum,
+                          boost::shared_ptr<rst::geometry::Pose>   intermediate) {
+    	// Translation
+        intermediate->mutable_translation()->set_x(datum->translation.translation(0));
+        intermediate->mutable_translation()->set_y(datum->translation.translation(1));
+        intermediate->mutable_translation()->set_z(datum->translation.translation(2));
+        intermediate->mutable_translation()->set_frame_id(datum->translation.frameId);
+
+        // Rotation
+        intermediate->mutable_rotation()->set_qw(datum->rotation.rotation(0));
+        intermediate->mutable_rotation()->set_qx(datum->rotation.rotation(1));
+        intermediate->mutable_rotation()->set_qy(datum->rotation.rotation(2));
+        intermediate->mutable_rotation()->set_qz(datum->rotation.rotation(3));
+        intermediate->mutable_rotation()->set_frame_id(datum->rotation.frameId);
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::geometry::Pose>   intermediate,
+                            boost::shared_ptr<rstrt::geometry::Pose> datum) {
+        // Translation
+    	datum->translation.translation(0) = intermediate->translation().x();
+		datum->translation.translation(1) = intermediate->translation().y();
+		datum->translation.translation(2) = intermediate->translation().z();
+		if (intermediate->translation().has_frame_id()) {
+			datum->translation.frameId = intermediate->translation().frame_id();
+		}
+
+        // Rotation
+		datum->rotation.rotation(0) = intermediate->rotation().qw();
+		datum->rotation.rotation(1) = intermediate->rotation().qx();
+		datum->rotation.rotation(2) = intermediate->rotation().qy();
+		datum->rotation.rotation(2) = intermediate->rotation().qz();
+		if (intermediate->rotation().has_frame_id()) {
+			datum->rotation.frameId = intermediate->rotation().frame_id();
+		}
     }
 };
 
@@ -174,6 +257,75 @@ public:
         for (int i = 0; i < intermediate->jerks().size(); ++i) {
             datum->jerks(i) = intermediate->jerks().Get(i);
         }
+    }
+};
+
+template<>
+class Helper<rstrt::kinematics::LinearVelocities,
+             rst::kinematics::LinearVelocities> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::kinematics::LinearVelocities> datum,
+                          boost::shared_ptr<rst::kinematics::LinearVelocities>   intermediate) {
+        intermediate->set_x(datum->linearVelocities(0));
+        intermediate->set_y(datum->linearVelocities(1));
+        intermediate->set_z(datum->linearVelocities(2));
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::kinematics::LinearVelocities>   intermediate,
+                            boost::shared_ptr<rstrt::kinematics::LinearVelocities> datum) {
+        datum->linearVelocities(0) = intermediate->x();
+        datum->linearVelocities(1) = intermediate->y();
+        datum->linearVelocities(2) = intermediate->z();
+    }
+};
+
+template<>
+class Helper<rstrt::geometry::AngularVelocity,
+             rst::kinematics::AngularVelocities> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::geometry::AngularVelocity> datum,
+                          boost::shared_ptr<rst::kinematics::AngularVelocities>   intermediate) {
+        intermediate->set_a(datum->angularVelocity(0));
+        intermediate->set_b(datum->angularVelocity(1));
+        intermediate->set_c(datum->angularVelocity(2));
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::kinematics::AngularVelocities>   intermediate,
+                            boost::shared_ptr<rstrt::geometry::AngularVelocity> datum) {
+        datum->angularVelocity(0) = intermediate->a();
+        datum->angularVelocity(1) = intermediate->b();
+        datum->angularVelocity(2) = intermediate->c();
+    }
+};
+
+template<>
+class Helper<rstrt::kinematics::Twist,
+             rst::kinematics::Twist> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::kinematics::Twist> datum,
+                          boost::shared_ptr<rst::kinematics::Twist>   intermediate) {
+        // LinearVelocity
+        intermediate->mutable_linear()->set_x(datum->linear(0));
+        intermediate->mutable_linear()->set_y(datum->linear(1));
+        intermediate->mutable_linear()->set_z(datum->linear(2));
+
+        // AngularVelocity
+        intermediate->mutable_angular()->set_a(datum->angular(0));
+        intermediate->mutable_angular()->set_b(datum->angular(1));
+        intermediate->mutable_angular()->set_c(datum->angular(2));
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::kinematics::Twist>   intermediate,
+                            boost::shared_ptr<rstrt::kinematics::Twist> datum) {
+    	// LinearVelocity
+    	datum->linear(0) = intermediate->linear().x();
+		datum->linear(1) = intermediate->linear().y();
+		datum->linear(2) = intermediate->linear().z();
+
+		// AngularVelocity
+		datum->angular(0) = intermediate->angular().a();
+		datum->angular(1) = intermediate->angular().b();
+		datum->angular(2) = intermediate->angular().c();
     }
 };
 
@@ -377,6 +529,10 @@ void registerConverter() {
 void registerConverters() {
     registerConverter<rstrt::geometry::Translation,
                       rst::geometry::Translation>();
+    registerConverter<rstrt::geometry::Rotation,
+                      rst::geometry::Rotation>();
+    registerConverter<rstrt::geometry::Pose,
+                      rst::geometry::Pose>();
 
     registerConverter<rstrt::kinematics::JointAngles,
                       rst::kinematics::JointAngles>();
@@ -386,6 +542,12 @@ void registerConverters() {
                       rst::kinematics::JointAccelerations>();
     registerConverter<rstrt::kinematics::JointJerks,
                       rst::kinematics::JointJerks>();
+    registerConverter<rstrt::kinematics::LinearVelocities,
+                      rst::kinematics::LinearVelocities>();
+    registerConverter<rstrt::geometry::AngularVelocity,
+                      rst::kinematics::AngularVelocities>();
+    registerConverter<rstrt::kinematics::Twist,
+                      rst::kinematics::Twist>();
 
     registerConverter<rstrt::dynamics::JointTorques,
                       rst::dynamics::JointTorques>();

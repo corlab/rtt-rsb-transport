@@ -28,11 +28,16 @@
 #include <rtt/types/TypekitPlugin.hpp>
 
 #include <rst-rt/geometry/Translation.hpp>
+#include <rst-rt/geometry/Rotation.hpp>
+#include <rst-rt/geometry/Pose.hpp>
 
 #include <rst-rt/kinematics/JointAngles.hpp>
 #include <rst-rt/kinematics/JointVelocities.hpp>
 #include <rst-rt/kinematics/JointAccelerations.hpp>
 #include <rst-rt/kinematics/JointJerks.hpp>
+#include <rst-rt/kinematics/LinearVelocities.hpp>
+#include <rst-rt/geometry/AngularVelocity.hpp>
+#include <rst-rt/kinematics/Twist.hpp>
 
 #include <rst-rt/dynamics/JointTorques.hpp>
 #include <rst-rt/dynamics/JointImpedance.hpp>
@@ -103,6 +108,12 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         if (name == "rstrt.geometry.Translation") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::geometry::Translation>());
+        } else if (name == "rstrt.geometry.Rotation") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::geometry::Rotation>());
+        } else if (name == "rstrt.geometry.Pose") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::geometry::Pose>());
         }
 
         if (name == "rstrt.kinematics.JointAngles") {
@@ -117,6 +128,15 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.kinematics.JointJerks") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::kinematics::JointJerks>());
+        } else if (name == "rstrt.kinematics.LinearVelocities") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::kinematics::LinearVelocities>());
+        } else if (name == "rstrt.geometry.AngularVelocity") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::geometry::AngularVelocity>());
+        } else if (name == "rstrt.kinematics.Twist") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::kinematics::Twist>());
         }
 
         if (name == "rstrt.dynamics.JointTorques") {
