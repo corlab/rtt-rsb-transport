@@ -41,7 +41,7 @@ add_definitions(${RST-RT_CXX_FLAGS})
 
 link_directories(${RST-RT_LIBRARY_DIRS})
 
-find_package(RST REQUIRED COMPONENTS sandbox)
+find_package(RST 0.16 REQUIRED COMPONENTS sandbox)
 
 include_directories(BEFORE SYSTEM ${RST_INCLUDE_DIRS})
 add_definitions(${RST_CFLAGS} ${RSTSANDBOX_CFLAGS})
