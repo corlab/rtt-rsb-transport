@@ -510,38 +510,42 @@ public:
         for (int i = 0; i < intermediate->weights().size(); ++i) {
             datum->weights(i) = intermediate->weights().Get(i);
         }
+    }
+};
 
+
+template<>
 class Helper<rstrt::robot::ForceApplication,
              rst::robot::ForceApplication> {
 public:
     void copyForSerialize(boost::shared_ptr<rstrt::robot::ForceApplication> datum,
                           boost::shared_ptr<rst::robot::ForceApplication>   intermediate) {
         // Link
-        intermediate->set_link(datum.linkn);
+        intermediate->set_link(datum->link);
         // Force
-        intermediate->force().set_x(datum->force(0));
-        intermediate->force().set_y(datum->force(1));
-        intermediate->force().set_z(datum->force(2));
+        intermediate->mutable_force()->set_x(datum->force(0));
+        intermediate->mutable_force()->set_y(datum->force(1));
+        intermediate->mutable_force()->set_z(datum->force(2));
         // Application point
-        intermediate->application_point().set_x(datum->application_point(0));
-        intermediate->application_point().set_y(datum->application_point(1));
-        intermediate->application_point().set_z(datum->application_point(2));
+        intermediate->mutable_application_point()->set_x(datum->applicationPoint(0));
+        intermediate->mutable_application_point()->set_y(datum->applicationPoint(1));
+        intermediate->mutable_application_point()->set_z(datum->applicationPoint(2));
     }
 
     void copyForDeSerialize(boost::shared_ptr<rst::robot::ForceApplication>   intermediate,
                             boost::shared_ptr<rstrt::robot::ForceApplication> datum) {
         // Link
-        datum.link = intermediate.link();
+        datum->link = intermediate->link();
         // Force
         datum->force.resize(3);
         datum->force(0) = intermediate->force().x();
         datum->force(1) = intermediate->force().y();
         datum->force(2) = intermediate->force().z();
         // Torques
-        datum->application_point.resize(3);
-        datum->application_point(0) = intermediate->application_point().x();
-        datum->application_point(1) = intermediate->application_point().y();
-        datum->application_point(2) = intermediate->application_point().z();
+        datum->applicationPoint.resize(3);
+        datum->applicationPoint(0) = intermediate->application_point().x();
+        datum->applicationPoint(1) = intermediate->application_point().y();
+        datum->applicationPoint(2) = intermediate->application_point().z();
     }
 };
 
