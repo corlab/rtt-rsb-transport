@@ -2,7 +2,7 @@
  *
  * This file is a part of the rtt-rsb-transport project
  *
- * Copyright (C) 2016 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2016, 2017 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -81,6 +81,8 @@
 
 #include <rst/robot/Weights.pb.h>
 #include <rst-rt/robot/Weights.hpp>
+#include <rst/robot/ForceApplication.pb.h>
+#include <rst-rt/robot/ForceApplication.hpp>
 
 #include "Converter.hpp"
 
@@ -145,7 +147,7 @@ class Helper<rstrt::geometry::Pose,
 public:
     void copyForSerialize(boost::shared_ptr<rstrt::geometry::Pose> datum,
                           boost::shared_ptr<rst::geometry::Pose>   intermediate) {
-    	// Translation
+        // Translation
         intermediate->mutable_translation()->set_x(datum->translation.translation(0));
         intermediate->mutable_translation()->set_y(datum->translation.translation(1));
         intermediate->mutable_translation()->set_z(datum->translation.translation(2));
@@ -162,7 +164,7 @@ public:
     void copyForDeSerialize(boost::shared_ptr<rst::geometry::Pose>   intermediate,
                             boost::shared_ptr<rstrt::geometry::Pose> datum) {
         // Translation
-    	datum->translation.translation(0) = intermediate->translation().x();
+        datum->translation.translation(0) = intermediate->translation().x();
 		datum->translation.translation(1) = intermediate->translation().y();
 		datum->translation.translation(2) = intermediate->translation().z();
 		if (intermediate->translation().has_frame_id()) {
@@ -317,8 +319,8 @@ public:
 
     void copyForDeSerialize(boost::shared_ptr<rst::kinematics::Twist>   intermediate,
                             boost::shared_ptr<rstrt::kinematics::Twist> datum) {
-    	// LinearVelocity
-    	datum->linear(0) = intermediate->linear().x();
+        // LinearVelocity
+        datum->linear(0) = intermediate->linear().x();
 		datum->linear(1) = intermediate->linear().y();
 		datum->linear(2) = intermediate->linear().z();
 
@@ -436,7 +438,7 @@ public:
     void copyForDeSerialize(boost::shared_ptr<rst::dynamics::Wrench>   intermediate,
                             boost::shared_ptr<rstrt::dynamics::Wrench> datum) {
         // Forces
-    	datum->forces(0) = intermediate->forces().x();
+        datum->forces(0) = intermediate->forces().x();
 		datum->forces(1) = intermediate->forces().y();
 		datum->forces(2) = intermediate->forces().z();
 
@@ -509,6 +511,37 @@ public:
             datum->weights(i) = intermediate->weights().Get(i);
         }
 
+class Helper<rstrt::robot::ForceApplication,
+             rst::robot::ForceApplication> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::robot::ForceApplication> datum,
+                          boost::shared_ptr<rst::robot::ForceApplication>   intermediate) {
+        // Link
+        intermediate->set_link(datum.linkn);
+        // Force
+        intermediate->force().set_x(datum->force(0));
+        intermediate->force().set_y(datum->force(1));
+        intermediate->force().set_z(datum->force(2));
+        // Application point
+        intermediate->application_point().set_x(datum->application_point(0));
+        intermediate->application_point().set_y(datum->application_point(1));
+        intermediate->application_point().set_z(datum->application_point(2));
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::robot::ForceApplication>   intermediate,
+                            boost::shared_ptr<rstrt::robot::ForceApplication> datum) {
+        // Link
+        datum.link = intermediate.link();
+        // Force
+        datum->force.resize(3);
+        datum->force(0) = intermediate->force().x();
+        datum->force(1) = intermediate->force().y();
+        datum->force(2) = intermediate->force().z();
+        // Torques
+        datum->application_point.resize(3);
+        datum->application_point(0) = intermediate->application_point().x();
+        datum->application_point(1) = intermediate->application_point().y();
+        datum->application_point(2) = intermediate->application_point().z();
     }
 };
 
@@ -558,6 +591,8 @@ void registerConverters() {
                       rst::robot::JointState>();
     registerConverter<rstrt::robot::Weights,
                       rst::robot::Weights>();
+    registerConverter<rstrt::robot::ForceApplication,
+                      rst::robot::ForceApplication>();
 }
 
 }

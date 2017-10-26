@@ -17,19 +17,20 @@ The code is heavily based on the rtt\_roscomm plugin in the
 | [RSB](https://code.cor-lab.org/projects/rsb) Type | [RTT](http://www.orocos.org/rtt) Type    |
 |---------------------------------------------------|------------------------------------------|
 | `rst.geometry.Translation`                        | `rstrt::geometry::Translation`           |
-| `rst.geometry.Rotation`                        | `rstrt::geometry::Rotation`           |
-| `rst.geometry.Pose`                        | `rstrt::geometry::Pose`           |
+| `rst.geometry.Rotation`                           | `rstrt::geometry::Rotation`              |
+| `rst.geometry.Pose`                               | `rstrt::geometry::Pose`                  |
 | `rst.kinematics.JointAngles`                      | `rstrt::kinematics::JointAngles`         |
 | `rst.kinematics.JointVelocities`                  | `rstrt::kinematics::JointVelocities`     |
 | `rst.kinematics.JointAccelerations`               | `rstrt::kinematics::JointAccelerations`  |
 | `rst.kinematics.JointJerks`                       | `rstrt::kinematics::JointJerks`          |
-| `rst.kinematics.LinearVelocities`                       | `rstrt::kinematics::LinearVelocities`          |
-| `rst.kinematics.AngularVelocities`                       | `rstrt::geometry::AngularVelocity`          |
-| `rst.kinematics.Twist`                       | `rstrt::kinematics::Twist`          |
+| `rst.kinematics.LinearVelocities`                 | `rstrt::kinematics::LinearVelocities`    |
+| `rst.kinematics.AngularVelocities`                | `rstrt::geometry::AngularVelocity`       |
+| `rst.kinematics.Twist`                            | `rstrt::kinematics::Twist`               |
 | `rst.dynamics.JointTorques`                       | `rstrt::dynamics::JointTorques`          |
 | `rst.dynamics.JointImpedance`                     | `rstrt::dynamics::JointImpedance`        |
 | `rst.robot.JointState`                            | `rstrt::robot::JointState`               |
 | `rst.robot.Weights`                               | `rstrt::robot::Weights`                  |
+| `rst.robot.ForceApplication`                      | `rstrt::robot::ForceApplication`         |
 | `bool`                                            | `bool`                                   |
 | `int64`                                           | `int`                                    |
 | `uint64`                                          | `uint`                                   |

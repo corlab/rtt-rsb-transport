@@ -47,6 +47,7 @@
 
 #include <rst-rt/robot/JointState.hpp>
 #include <rst-rt/robot/Weights.hpp>
+#include <rst-rt/robot/ForceApplication.hpp>
 
 #include "../../constants.hpp"
 
@@ -162,6 +163,9 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.robot.Weights") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::robot::Weights>());
+        } else if (name == "rstrt.robot.ForceApplication") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::robot::ForceApplication>());
         } else {
             return false;
         }
