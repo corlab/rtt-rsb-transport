@@ -37,5 +37,12 @@ namespace scope {
  */
 RTT::ConnPolicy scope(const std::string& name);
 
+/**
+ * Returns a ConnPolicy object for streaming to or from 
+ * the given RSB scope. Also specifies the buffer size of
+ * the connection to be created.
+ */
+RTT::ConnPolicy scopeBuffer(const std::string& name, int size);
+
 }
 }

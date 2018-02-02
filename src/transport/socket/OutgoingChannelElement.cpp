@@ -50,6 +50,9 @@ OutgoingChannelElementBase::OutgoingChannelElementBase(RTT::base::PortInterface 
         << RTT::endlog();
 
     this->informer = rsb::getFactory().createInformer<rsb::AnyType>(this->scope);
+
+    act = RSBPublishActivity::Instance();
+    act->addPublisher(this);
 }
 
 OutgoingChannelElementBase::~OutgoingChannelElementBase() {
@@ -59,6 +62,7 @@ OutgoingChannelElementBase::~OutgoingChannelElementBase() {
         << "Destroying " << rsc::runtime::typeName(*this)
         << " on scope " << this->scope
         << RTT::endlog();
+    act->removePublisher(this);
 }
 
 bool OutgoingChannelElementBase::inputReady() {

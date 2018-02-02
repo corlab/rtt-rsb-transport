@@ -34,12 +34,24 @@
 #include <rsb/Scope.h>
 #include <rsb/Informer.h>
 
+#include "../RSBPublishActivity.hpp"
+
+#ifndef RTT_VERSION_GTE
+  #define RTT_VERSION_GTE(major,minor,patch) \
+      ((RTT_VERSION_MAJOR > major) || (RTT_VERSION_MAJOR == major && \
+       (RTT_VERSION_MINOR > minor) || (RTT_VERSION_MINOR == minor && \
+       (RTT_VERSION_PATCH >= patch))))
+#endif
+
 namespace rtt_rsbcomm {
 namespace transport {
 namespace socket {
 
-class OutgoingChannelElementBase {
+class OutgoingChannelElementBase: public RSBPublisher {
 public:
+
+    //! We must cache the RSBPublishActivity object.
+    RSBPublishActivity::shared_ptr act;
 
     /**
      * Contructor of to create ROS publisher ChannelElement, it will
@@ -62,6 +74,11 @@ public:
      * @return always true in our case
      */
     virtual bool inputReady();
+
+    /**
+     * Publish all data in the channel to a RSB scope.
+     */
+    virtual void publish()=0;
 
 protected:
     rsb::Scope           scope;
@@ -86,9 +103,27 @@ public:
      *
      * @return always true
      */
-    virtual bool data_sample(typename RTT::base::ChannelElement<T>::param_t sample) {
-        this->sample = sample;
-        return true;
+#if RTT_VERSION_GTE(2,8,99)
+    virtual RTT::WriteStatus data_sample(typename RTT::base::ChannelElement<T>::param_t sample)
+    {
+      this->sample = sample;
+      return RTT::WriteSuccess;
+    }
+#else
+    virtual bool data_sample(typename RTT::base::ChannelElement<T>::param_t sample)
+    {
+      this->sample = sample;
+      return true;
+    }
+#endif
+
+    /** 
+     * Function to see if the ChannelElement is ready to receive inputs
+     * 
+     * @return always true in our case
+     */
+    virtual bool inputReady() {
+      return true;
     }
 
     /**
@@ -99,7 +134,7 @@ public:
     bool signal() {
         //Logger::In in(topicname);
         //log(Debug)<<"Requesting publish"<<endlog();
-        //return act->trigger();
+        return act->trigger();
     }
 
     void publish() {
@@ -111,10 +146,18 @@ public:
         }
     }
 
-    bool write(typename RTT::base::ChannelElement<T>::param_t sample) {
-        this->informer->publish(boost::shared_ptr<T>(new T(sample)),
-                                rsc::runtime::typeName<T>());
-        return true;
+#if RTT_VERSION_GTE(2,8,99)
+    RTT::WriteStatus write(typename RTT::base::ChannelElement<T>::param_t sample)
+#else
+    bool write(typename RTT::base::ChannelElement<T>::param_t sample)
+#endif
+    {
+        this->informer->publish(boost::shared_ptr<T>(new T(sample)), rsc::runtime::typeName<T>());
+#if RTT_VERSION_GTE(2,8,99)
+      return RTT::WriteSuccess;
+#else
+      return true;
+#endif
     }
 
 private:

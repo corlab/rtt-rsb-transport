@@ -28,6 +28,8 @@ orocos_typekit(rtt-rsb-socket-transport
 
                converter/converters.cpp
 
+               transport/RSBPublishActivity.cpp
+
                transport/socket/OutgoingChannelElement.cpp
                transport/socket/IncomingChannelElement.cpp
                transport/socket/Transporter.cpp

@@ -40,6 +40,16 @@ RTT::ConnPolicy scope(const std::string& name) {
     cp.transport = socket_protocol_id;
     cp.name_id = name;
     cp.init = false;
+    cp.pull = false;
+    return cp;
+}
+
+RTT::ConnPolicy scopeBuffer(const std::string& name, int size) {
+    RTT::ConnPolicy cp = RTT::ConnPolicy::buffer(size);
+    cp.transport = socket_protocol_id;
+    cp.name_id = name;
+    cp.init = false;
+    cp.pull = false;
     return cp;
 }
 
@@ -55,6 +65,11 @@ void loadRSBScopeService() {
     socket->addOperation("scope", &scope)
         .doc("Creates a ConnPolicy for listening on or publishing to a scope. No buffering is done.")
         .arg("scope", "The RSB scope name");
+
+    socket->addOperation("scopeBuffer", &scopeBuffer)
+        .doc("Creates a buffered ConnPolicy for listening on or publishing to a scope.")
+        .arg("scope", "The RSB scope name")
+        .arg("size", "The size of the buffer");
 }
 
 }

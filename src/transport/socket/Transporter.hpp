@@ -73,6 +73,12 @@ protected:
             << " for port `" << displayNameForPort(port) << "'"
             << RTT::endlog();
 
+        // Pull semantics are not supported by the RSB message transport.
+        if (policy.pull) {
+            RTT::log(RTT::Error) << "Pull connections are not supported by the RSB message transport." << RTT::endlog();
+            return RTT::base::ChannelElementBase::shared_ptr();
+        }
+
         /*switch (policy.type) {
         case RTT::ConnPolicy::UNBUFFERED:
             RTT::log(RTT::Debug)
@@ -84,14 +90,20 @@ protected:
             throw std::runtime_error("Only unbuffered mode is supported.");
             }*/
 
-        RTT::base::ChannelElementBase::shared_ptr buf
-            (RTT::internal::ConnFactory::buildDataStorage<T>(policy));
-        if (!buf) {
-            return RTT::base::ChannelElementBase::shared_ptr();
-        }
-        RTT::base::ChannelElementBase::shared_ptr tmp
-            (new IncomingChannelElement<T>(port, policy));
+        RTT::base::ChannelElementBase::shared_ptr tmp(new IncomingChannelElement<T>(port, policy));
+
+        // RTT::base::ChannelElementBase::shared_ptr buf(RTT::internal::ConnFactory::buildDataStorage<T>(policy));
+        // if (!buf) {
+        //     return RTT::base::ChannelElementBase::shared_ptr();
+        // }
+
+    #if !RTT_VERSION_GTE(2,8,99)
+        RTT::base::ChannelElementBase::shared_ptr buf = RTT::internal::ConnFactory::buildDataStorage<T>(policy);
+        if (!buf) return RTT::base::ChannelElementBase::shared_ptr();
         tmp->setOutput(buf);
+    #endif
+        
+        // tmp->setOutput(buf);
 
         return tmp;
     }
@@ -99,16 +111,27 @@ protected:
     RTT::base::ChannelElementBase::shared_ptr
     createOutgoingStream(RTT::base::PortInterface *port,
                          const RTT::ConnPolicy    &policy) const {
-        RTT::base::ChannelElementBase::shared_ptr buf
-            (RTT::internal::ConnFactory::buildDataStorage<T>(policy));
-        RTT::base::ChannelElementBase::shared_ptr tmp
-            (new OutgoingChannelElement<T>(port, policy));
+
+        // Pull semantics are not supported by the RSB message transport.
+        if (policy.pull) {
+            RTT::log(RTT::Error) << "Pull connections are not supported by the RSB message transport." << RTT::endlog();
+            return RTT::base::ChannelElementBase::shared_ptr();
+        }
+
+        RTT::base::ChannelElementBase::shared_ptr buf(RTT::internal::ConnFactory::buildDataStorage<T>(policy));
+        RTT::base::ChannelElementBase::shared_ptr tmp(new OutgoingChannelElement<T>(port, policy));
 
         if (!buf) {
             return RTT::base::ChannelElementBase::shared_ptr();
         }
-        tmp->setOutput(buf);
-        return tmp;
+
+#if RTT_VERSION_GTE(2,8,99)
+        buf->connectTo(tmp);
+#else
+        buf->setOutput(tmp);
+#endif
+        // tmp->setOutput(buf);
+        return buf;
     }
 };
 
