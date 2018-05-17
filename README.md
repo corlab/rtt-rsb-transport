@@ -70,7 +70,7 @@ You can also set up these connections in C++ code:
 
 // ...
 
-  // Add the port and stream it to a ROS topic
+  // Add the port and stream it to an RSB scope
   this->ports()->addPort("my_port", my_port_);
   my_port_.createStream(rtt_rsbcomm::scope::scope("/my/scope"));
 
