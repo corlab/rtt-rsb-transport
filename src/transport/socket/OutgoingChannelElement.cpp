@@ -32,6 +32,10 @@
 
 #include <rsb/Factory.h>
 
+#include <rsb/converter/UnambiguousConverterMap.h>
+
+#include <rsb/converter/IntegerConverter.h>
+
 #include "../../util.hpp"
 
 namespace rtt_rsbcomm {
@@ -48,6 +52,29 @@ OutgoingChannelElementBase::OutgoingChannelElementBase(RTT::base::PortInterface 
         <<  displayNameForPort(port)
         << "' on scope " << this->scope
         << RTT::endlog();
+
+    // rsb::ParticipantConfig config = rsb::getFactory().getDefaultParticipantConfig();
+
+    // std::set<rsb::ParticipantConfig::Transport> transports = config.getTransports();
+
+    // for (std::set<rsb::ParticipantConfig::Transport>::const_iterator it = transports.begin(); it != transports.end(); ++it) {
+
+    //     rsb::ParticipantConfig::Transport& transport = config.mutableTransport(it->getName());
+
+    //     // rsc::runtime::Properties& options = transport.mutableOptions();
+
+    //     // rsb::ParticipantConfig::Transport::ConverterNames cNames = transport.getConverters();
+
+    //     // cNames.insert(std::make_pair("int", boost::shared_ptr<typename rsb::converter::Converter<std::string> >(new rsb::converter::Int64Converter())));
+
+    //     std::vector<std::string> tmp_vec;
+    //     tmp_vec.push_back("converter");
+    //     tmp_vec.push_back("cpp");
+    //     tmp_vec.push_back("int");
+    //     transport.handleOption(tmp_vec, "int64");
+
+    //     // options.get<rsb::converter::UnambiguousConverterMap<std::string> >("converters").addConverter("int", boost::shared_ptr<typename rsb::converter::Converter<std::string> >(new rsb::converter::Int64Converter()));
+    // }
 
     this->informer = rsb::getFactory().createInformer<rsb::AnyType>(this->scope);
 

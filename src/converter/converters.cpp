@@ -590,6 +590,8 @@ void registerConverters() {
                       rst::dynamics::JointTorques>();
     registerConverter<rstrt::dynamics::JointImpedance,
                       rst::dynamics::JointImpedance>();
+    registerConverter<rstrt::dynamics::Wrench,
+                      rst::dynamics::Wrench>();
 
     registerConverter<rstrt::robot::JointState,
                       rst::robot::JointState>();

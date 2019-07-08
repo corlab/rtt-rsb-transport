@@ -86,10 +86,10 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
                                    new socket::Transporter<char>());
         } else if (name == "int") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
-                                   new socket::Transporter<int>());
+                                   new socket::Transporter<long>());
         } else if (name == "uint") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
-                                   new socket::Transporter<unsigned int>());
+                                   new socket::Transporter<unsigned long>());
         } else if (name == "double") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<double>());
