@@ -78,8 +78,10 @@ OutgoingChannelElementBase::OutgoingChannelElementBase(RTT::base::PortInterface 
 
     this->informer = rsb::getFactory().createInformer<rsb::AnyType>(this->scope);
 
-    act = RSBPublishActivity::Instance();
+    // act = RSBPublishActivity::Instance();
+    act = boost::shared_ptr<RSBPublishActivity>(new RSBPublishActivity(displayNameForPort(port) + "->" + this->scope));
     act->addPublisher(this);
+    act->start();
 }
 
 OutgoingChannelElementBase::~OutgoingChannelElementBase() {
@@ -90,6 +92,7 @@ OutgoingChannelElementBase::~OutgoingChannelElementBase() {
         << " on scope " << this->scope
         << RTT::endlog();
     act->removePublisher(this);
+    // act->reset(...)?
 }
 
 bool OutgoingChannelElementBase::inputReady() {

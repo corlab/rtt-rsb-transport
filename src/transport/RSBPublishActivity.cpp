@@ -7,10 +7,10 @@ namespace rtt_rsbcomm {
 
         RSBPublishActivity::weak_ptr RSBPublishActivity::rsb_pub_act;
 
-        RSBPublishActivity::RSBPublishActivity( const std::string& name)
+        RSBPublishActivity::RSBPublishActivity(const std::string& name)
         : Activity(ORO_SCHED_RT, RTT::os::LowestPriority, 0.0, 0, name) {
-            Logger::In in("RSBPublishActivity");
-            log(Debug)<<"Creating RSBPublishActivity"<<endlog();
+            Logger::In in(name);
+            log(Error)<<"Creating RSBPublishActivity: " << name <<endlog();
         }
 
         void RSBPublishActivity::loop(){

@@ -33,9 +33,9 @@ namespace rtt_rsbcomm {
      * There is no strong reason why only one publisher should
      * exist, in later implementations, one publisher thread per
      * channel may exist as well. See the usage recommendations
-     * for Instance() 
+     * for Instance()
      */
-    class RSBPublishActivity : public RTT::Activity 
+    class RSBPublishActivity : public RTT::Activity
     {
     public:
         typedef boost::shared_ptr<RSBPublishActivity> shared_ptr;
@@ -45,17 +45,17 @@ namespace rtt_rsbcomm {
         static weak_ptr rsb_pub_act;
 
         //! A set keeping track of all publishers in the current
-        //! process. It must be guarded by the mutex since 
+        //! process. It must be guarded by the mutex since
         //! insertion/removal happens concurrently.
         typedef std::set< RSBPublisher* > Publishers;
         typedef Publishers::iterator iterator;
         Publishers publishers;
         RTT::os::Mutex publishers_lock;
 
-        RSBPublishActivity( const std::string& name);
+        RSBPublishActivity(const std::string& name);
 
         void loop();
-        
+
     public:
         /**
          * Returns the single instance of the RSBPublisher. This function
@@ -65,10 +65,10 @@ namespace rtt_rsbcomm {
          * you consistently keep using the same instance, which is fine then.
          */
         static shared_ptr Instance();
-        
+
         void addPublisher(RSBPublisher* pub);
         void removePublisher(RSBPublisher* pub);
-        
+
         ~RSBPublishActivity();
 
     };//class
