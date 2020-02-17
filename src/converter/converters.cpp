@@ -85,7 +85,7 @@
 #include <rst-rt/robot/ForceApplication.hpp>
 
 #include <rst/math/MatrixDouble.pb.h>
-#include <rst-rt/math/MatrixDouble.hpp>
+// #include <rst-rt/math/MatrixDouble.hpp>
 
 #include "Converter.hpp"
 
@@ -553,31 +553,31 @@ public:
 };
 
 
-template<>
-class Helper<rstrt::math::MatrixDouble,
-             rst::math::MatrixDouble> {
-public:
-    void copyForSerialize(boost::shared_ptr<rstrt::math::MatrixDouble> datum,
-                          boost::shared_ptr<rst::math::MatrixDouble>   intermediate) {
-        intermediate->mutable_size()->set_m(datum->matrix.rows());
-        intermediate->mutable_size()->set_n(datum->matrix.cols());
-        for (int i = 0; i < datum->matrix.rows(); i++) {
-            for (int j = 0; j < datum->matrix.cols(); j++) {
-                intermediate->mutable_data()->add_value(datum->matrix(i,j));
-            }
-        }
-    }
+// template<>
+// class Helper<rstrt::math::MatrixDouble,
+//              rst::math::MatrixDouble> {
+// public:
+//     void copyForSerialize(boost::shared_ptr<rstrt::math::MatrixDouble> datum,
+//                           boost::shared_ptr<rst::math::MatrixDouble>   intermediate) {
+//         intermediate->mutable_size()->set_m(datum->matrix.rows());
+//         intermediate->mutable_size()->set_n(datum->matrix.cols());
+//         for (int i = 0; i < datum->matrix.rows(); i++) {
+//             for (int j = 0; j < datum->matrix.cols(); j++) {
+//                 intermediate->mutable_data()->add_value(datum->matrix(i,j));
+//             }
+//         }
+//     }
 
-    void copyForDeSerialize(boost::shared_ptr<rst::math::MatrixDouble>   intermediate,
-                            boost::shared_ptr<rstrt::math::MatrixDouble> datum) {
-        datum->matrix.resize(intermediate->size().m(), intermediate->size().n());
-        for (int i = 0; i < datum->matrix.rows(); i++) {
-            for (int j = 0; j < datum->matrix.cols(); j++) {
-                datum->matrix(i,j) = intermediate->data().value(i * j);
-            }
-        }
-    }
-};
+//     void copyForDeSerialize(boost::shared_ptr<rst::math::MatrixDouble>   intermediate,
+//                             boost::shared_ptr<rstrt::math::MatrixDouble> datum) {
+//         datum->matrix.resize(intermediate->size().m(), intermediate->size().n());
+//         for (int i = 0; i < datum->matrix.rows(); i++) {
+//             for (int j = 0; j < datum->matrix.cols(); j++) {
+//                 datum->matrix(i,j) = intermediate->data().value(i * j);
+//             }
+//         }
+//     }
+// };
 
 // EIGEN
 
@@ -676,8 +676,8 @@ void registerConverters() {
     registerConverter<rstrt::robot::ForceApplication,
                       rst::robot::ForceApplication>();
 
-    registerConverter<rstrt::math::MatrixDouble,
-                      rst::math::MatrixDouble>();
+    // registerConverter<rstrt::math::MatrixDouble,
+    //                   rst::math::MatrixDouble>();
 
     registerConverter<Eigen::VectorXf,
                       rst::math::MatrixDouble>();
