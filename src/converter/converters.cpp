@@ -579,6 +579,52 @@ public:
     }
 };
 
+// EIGEN
+
+template<>
+class Helper<Eigen::VectorXf,
+             rst::math::MatrixDouble> {
+public:
+    void copyForSerialize(boost::shared_ptr<Eigen::VectorXf> datum,
+                          boost::shared_ptr<rst::math::MatrixDouble>   intermediate) {
+        intermediate->mutable_size()->set_m(datum->rows());
+        intermediate->mutable_size()->set_n(datum->cols());
+        for (int i = 0; i < (datum->rows() * datum->cols()); i++) {
+            intermediate->mutable_data()->add_value(datum->data()[i]);
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::math::MatrixDouble>   intermediate,
+                            boost::shared_ptr<Eigen::VectorXf> datum) {
+        datum->resize(intermediate->size().m(), intermediate->size().n());
+        for (int i = 0; i < (datum->rows() * datum->cols()); i++) {
+            datum->data()[i] = intermediate->data().value(i);
+        }
+    }
+};
+
+template<>
+class Helper<Eigen::MatrixXf,
+             rst::math::MatrixDouble> {
+public:
+    void copyForSerialize(boost::shared_ptr<Eigen::MatrixXf> datum,
+                          boost::shared_ptr<rst::math::MatrixDouble>   intermediate) {
+        intermediate->mutable_size()->set_m(datum->rows());
+        intermediate->mutable_size()->set_n(datum->cols());
+        for (int i = 0; i < (datum->rows() * datum->cols()); i++) {
+            intermediate->mutable_data()->add_value(datum->data()[i]);
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::math::MatrixDouble>   intermediate,
+                            boost::shared_ptr<Eigen::MatrixXf> datum) {
+        datum->resize(intermediate->size().m(), intermediate->size().n());
+        for (int i = 0; i < (datum->rows() * datum->cols()); i++) {
+            datum->data()[i] = intermediate->data().value(i);
+        }
+    }
+};
+
 template <typename T, typename I>
 void registerConverter() {
     RTT::Logger::In in("rtt_rsbcomm::transport::socket::registerConverter");
@@ -631,6 +677,11 @@ void registerConverters() {
                       rst::robot::ForceApplication>();
 
     registerConverter<rstrt::math::MatrixDouble,
+                      rst::math::MatrixDouble>();
+
+    registerConverter<Eigen::VectorXf,
+                      rst::math::MatrixDouble>();
+    registerConverter<Eigen::MatrixXf,
                       rst::math::MatrixDouble>();
 }
 

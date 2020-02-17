@@ -171,6 +171,12 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.math.MatrixDouble") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::math::MatrixDouble>());
+        } else if (name == "eigen_vector") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<Eigen::VectorXf>());
+        } else if (name == "eigen_matrix") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<Eigen::MatrixXf>());
         } else {
             return false;
         }
