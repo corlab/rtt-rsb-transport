@@ -49,6 +49,8 @@
 #include <rst-rt/robot/Weights.hpp>
 #include <rst-rt/robot/ForceApplication.hpp>
 
+#include <rst-rt/math/MatrixDouble.hpp>
+
 #include "../../constants.hpp"
 
 #include "../../converter/converters.hpp"
@@ -166,6 +168,9 @@ struct TransportPlugin : public RTT::types::TransportPlugin {
         } else if (name == "rstrt.robot.ForceApplication") {
             return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
                                    new socket::Transporter<rstrt::robot::ForceApplication>());
+        } else if (name == "rstrt.math.MatrixDouble") {
+            return ti->addProtocol(ORO_RSB_SOCKET_PROTOCOL_ID,
+                                   new socket::Transporter<rstrt::math::MatrixDouble>());
         } else {
             return false;
         }

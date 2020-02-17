@@ -84,6 +84,9 @@
 #include <rst/robot/ForceApplication.pb.h>
 #include <rst-rt/robot/ForceApplication.hpp>
 
+#include <rst/math/MatrixDouble.pb.h>
+#include <rst-rt/math/MatrixDouble.hpp>
+
 #include "Converter.hpp"
 
 namespace rtt_rsbcomm {
@@ -549,6 +552,33 @@ public:
     }
 };
 
+
+template<>
+class Helper<rstrt::math::MatrixDouble,
+             rst::math::MatrixDouble> {
+public:
+    void copyForSerialize(boost::shared_ptr<rstrt::math::MatrixDouble> datum,
+                          boost::shared_ptr<rst::math::MatrixDouble>   intermediate) {
+        intermediate->mutable_size()->set_m(datum->matrix.rows());
+        intermediate->mutable_size()->set_n(datum->matrix.cols());
+        for (int i = 0; i < datum->matrix.rows(); i++) {
+            for (int j = 0; j < datum->matrix.cols(); j++) {
+                intermediate->mutable_data()->add_value(datum->matrix(i,j));
+            }
+        }
+    }
+
+    void copyForDeSerialize(boost::shared_ptr<rst::math::MatrixDouble>   intermediate,
+                            boost::shared_ptr<rstrt::math::MatrixDouble> datum) {
+        datum->matrix.resize(intermediate->size().m(), intermediate->size().n());
+        for (int i = 0; i < datum->matrix.rows(); i++) {
+            for (int j = 0; j < datum->matrix.cols(); j++) {
+                datum->matrix(i,j) = intermediate->data().value(i * j);
+            }
+        }
+    }
+};
+
 template <typename T, typename I>
 void registerConverter() {
     RTT::Logger::In in("rtt_rsbcomm::transport::socket::registerConverter");
@@ -599,6 +629,9 @@ void registerConverters() {
                       rst::robot::Weights>();
     registerConverter<rstrt::robot::ForceApplication,
                       rst::robot::ForceApplication>();
+
+    registerConverter<rstrt::math::MatrixDouble,
+                      rst::math::MatrixDouble>();
 }
 
 }
