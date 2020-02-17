@@ -138,8 +138,8 @@ public:
     }
 
     void publish() {
-        // this read should always succeed since signal() means 'data
-        // available in a data element'.
+        // this read should always succeed since signal() means
+        // 'data available in a data element'.
         typename RTT::base::ChannelElement<T>::shared_ptr input = this->getInput();
         while (input && (input->read(this->sample, false) == RTT::NewData)) {
             write(this->sample);
