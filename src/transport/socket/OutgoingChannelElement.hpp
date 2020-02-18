@@ -83,6 +83,7 @@ public:
 protected:
     rsb::Scope           scope;
     rsb::InformerBasePtr informer;
+    double last_triggered_time;
 };
 
 template <typename T>
@@ -132,9 +133,16 @@ public:
      * @return true if publishing succeeded
      */
     bool signal() {
-        //Logger::In in(topicname);
-        //log(Debug)<<"Requesting publish"<<endlog();
-        return act->trigger();
+        if (act->getPublishPeriod() > 0.0) {
+            double tmp_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
+            if ((tmp_time - this->last_triggered_time) > act->getPublishPeriod()) {
+                act->trigger();
+                this->last_triggered_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
+            }
+        } else {
+            act->trigger();
+        }
+        return true;
     }
 
     void publish() {

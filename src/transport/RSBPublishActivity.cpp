@@ -8,12 +8,12 @@ namespace rtt_rsbcomm {
         RSBPublishActivity::weak_ptr RSBPublishActivity::rsb_pub_act;
 
         RSBPublishActivity::RSBPublishActivity(const std::string& name)
-        : Activity(ORO_SCHED_RT, RTT::os::LowestPriority, 0.0, 0, name) {
+        : Activity(ORO_SCHED_RT, RTT::os::LowestPriority, 0.0, 0, name), publish_period(0.0) {
             Logger::In in(name);
-            log(Error)<<"Creating RSBPublishActivity: " << name <<endlog();
+            log(Info) << "Creating RSBPublishActivity: " << name << endlog();
         }
 
-        void RSBPublishActivity::loop(){
+        void RSBPublishActivity::loop() {
             os::MutexLock lock(publishers_lock);
             for(iterator it = publishers.begin(); it != publishers.end(); ++it) {
                 (*it)->publish();
@@ -31,20 +31,31 @@ namespace rtt_rsbcomm {
         }
 
         void RSBPublishActivity::addPublisher(RSBPublisher* pub) {
+            log(Info) << "Add RSBPublisher" << endlog();
             os::MutexLock lock(publishers_lock);
             publishers.insert(pub);
         }
 
         void RSBPublishActivity::removePublisher(RSBPublisher* pub) {
+            log(Info) << "Remove RSBPublisher" << endlog();
             os::MutexLock lock(publishers_lock);
             publishers.erase(pub);
         }
 
         RSBPublishActivity::~RSBPublishActivity() {
             Logger::In in("RSBPublishActivity");
-            log(Info) << "RSBPublishActivity cleans up: no more work."<<endlog();
+            log(Info) << "RSBPublishActivity cleans up: no more work." << endlog();
             stop();
         }
 
+        void RSBPublishActivity::setPublishPeriod(double p) {
+            // this->setPeriod(p);
+            this->publish_period = p;
+        }
+
+        double RSBPublishActivity::getPublishPeriod() {
+            // return this->getPeriod();
+            return this->publish_period;
+        }
     }
 }

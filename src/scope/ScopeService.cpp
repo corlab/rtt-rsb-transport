@@ -44,10 +44,31 @@ RTT::ConnPolicy scope(const std::string& name) {
     return cp;
 }
 
+RTT::ConnPolicy scopeTimed(const std::string& name, const RTT::Seconds& interval) {
+    // rtt_rsbcomm::transport::ConnPolicyTimed cp = rtt_rsbcomm::transport::ConnPolicyTimed::data(interval);
+    RTT::ConnPolicy cp = RTT::ConnPolicy::data();
+    // cp.type = RTT::ConnPolicy::UNBUFFERED;
+    cp.transport = socket_protocol_id;
+    cp.name_id = std::string("#") + std::to_string(interval) + std::string("#") + name;
+    cp.init = false;
+    cp.pull = false;
+    return cp;
+}
+
 RTT::ConnPolicy scopeBuffer(const std::string& name, int size) {
     RTT::ConnPolicy cp = RTT::ConnPolicy::buffer(size);
     cp.transport = socket_protocol_id;
     cp.name_id = name;
+    cp.init = false;
+    cp.pull = false;
+    return cp;
+}
+
+RTT::ConnPolicy scopeBufferTimed(const std::string& name, int size, const RTT::Seconds& interval) {
+    // rtt_rsbcomm::transport::ConnPolicyTimed cp = rtt_rsbcomm::transport::ConnPolicyTimed::buffer(interval, size);
+    RTT::ConnPolicy cp = RTT::ConnPolicy::buffer(size);
+    cp.transport = socket_protocol_id;
+    cp.name_id = std::string("#") + std::to_string(interval) + std::string("#") + name;
     cp.init = false;
     cp.pull = false;
     return cp;
@@ -66,10 +87,21 @@ void loadRSBScopeService() {
         .doc("Creates a ConnPolicy for listening on or publishing to a scope. No buffering is done.")
         .arg("scope", "The RSB scope name");
 
+    socket->addOperation("scopeTimed", &scopeTimed)
+        .doc("Creates a ConnPolicy(Timed) for listening on or publishing to a scope in a specific interval. No buffering is done.")
+        .arg("scope", "The RSB scope name")
+        .arg("interval", "The listening or publishing interval");
+
     socket->addOperation("scopeBuffer", &scopeBuffer)
         .doc("Creates a buffered ConnPolicy for listening on or publishing to a scope.")
         .arg("scope", "The RSB scope name")
         .arg("size", "The size of the buffer");
+
+    socket->addOperation("scopeBufferTimed", &scopeBufferTimed)
+        .doc("Creates a buffered ConnPolicy for listening on or publishing to a scope in a specific interval.")
+        .arg("scope", "The RSB scope name")
+        .arg("size", "The size of the buffer")
+        .arg("interval", "The listening or publishing interval");
 }
 
 }

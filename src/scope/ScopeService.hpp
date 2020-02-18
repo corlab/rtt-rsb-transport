@@ -28,6 +28,8 @@
 
 #include <rtt/ConnPolicy.hpp>
 
+#include "../transport/ConnPolicyTimed.hpp"
+
 namespace rtt_rsbcomm {
 namespace scope {
 
@@ -38,11 +40,24 @@ namespace scope {
 RTT::ConnPolicy scope(const std::string& name);
 
 /**
+ * Returns a ConnPolicy(Timed) object for streaming to or from
+ * the given RSB scope. No buffering is done.
+ */
+RTT::ConnPolicy scopeTimed(const std::string& name, const RTT::Seconds& interval);
+
+/**
  * Returns a ConnPolicy object for streaming to or from 
  * the given RSB scope. Also specifies the buffer size of
  * the connection to be created.
  */
 RTT::ConnPolicy scopeBuffer(const std::string& name, int size);
+
+/**
+ * Returns a ConnPolicy(Timed) object for streaming to or from 
+ * the given RSB scope. Also specifies the buffer size of
+ * the connection to be created.
+ */
+RTT::ConnPolicy scopeBufferTimed(const std::string& name, int size, const RTT::Seconds& interval);
 
 }
 }

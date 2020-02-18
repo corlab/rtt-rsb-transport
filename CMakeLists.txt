@@ -24,10 +24,23 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(rtt_rsbcomm CXX)
 
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14  -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDITIONAL_CFLAGS} -g")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Dependencies
 
 find_package(OROCOS-RTT REQUIRED)
 include(${OROCOS-RTT_USE_FILE_PATH}/UseOROCOS-RTT.cmake)
+
+# if(${OROCOS_TARGET} STREQUAL "xenomai" )
+#   message(STATUS "checking for xenomai")
+#   find_package(Xenomai REQUIRED)
+#   message(STATUS ${Xenomai_LIBRARY_DIRS})
+#   set_property(DIRECTORY ${PROJECT_SOURCE_DIR} APPEND PROPERTY COMPILE_DEFINITIONS XENOMAI)
+# endif()
 
 find_package(RSB REQUIRED)
 

@@ -39,6 +39,8 @@ namespace rtt_rsbcomm {
     {
     public:
         typedef boost::shared_ptr<RSBPublishActivity> shared_ptr;
+
+        RSBPublishActivity(const std::string& name);
     private:
         typedef boost::weak_ptr<RSBPublishActivity> weak_ptr;
         //! This pointer may not be refcounted since it would prevent cleanup.
@@ -52,7 +54,7 @@ namespace rtt_rsbcomm {
         Publishers publishers;
         RTT::os::Mutex publishers_lock;
 
-        RSBPublishActivity(const std::string& name);
+        // RSBPublishActivity(const std::string& name);
 
         void loop();
 
@@ -60,7 +62,7 @@ namespace rtt_rsbcomm {
         /**
          * Returns the single instance of the RSBPublisher. This function
          * is not thread-safe when it creates the RSBPublisher object.
-         * Therefor, it is advised to cache the object which Intance() returns
+         * Therefore, it is advised to cache the object which Intance() returns
          * such that, in the unlikely event that two publishers exist,
          * you consistently keep using the same instance, which is fine then.
          */
@@ -68,6 +70,10 @@ namespace rtt_rsbcomm {
 
         void addPublisher(RSBPublisher* pub);
         void removePublisher(RSBPublisher* pub);
+
+        void setPublishPeriod(double p);
+        double getPublishPeriod();
+        double publish_period;
 
         ~RSBPublishActivity();
 

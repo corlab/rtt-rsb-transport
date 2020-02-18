@@ -29,6 +29,7 @@ orocos_typekit(rtt-rsb-socket-transport
                converter/converters.cpp
 
                transport/RSBPublishActivity.cpp
+               transport/ConnPolicyTimed.cpp
 
                transport/socket/OutgoingChannelElement.cpp
                transport/socket/IncomingChannelElement.cpp
@@ -45,6 +46,7 @@ target_link_libraries(rtt-rsb-socket-transport
 # Scope service plugin
 
 orocos_service(rtt-rsb-scope-service
+                transport/ConnPolicyTimed.cpp
                scope/ScopeService.cpp)
 
 target_link_libraries(rtt-rsb-scope-service
