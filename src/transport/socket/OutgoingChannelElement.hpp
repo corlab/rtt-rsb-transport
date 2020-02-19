@@ -36,6 +36,13 @@
 
 #include "../RSBPublishActivity.hpp"
 
+#include <rtt/TaskContext.hpp>
+#include <rsc/runtime/TypeStringTools.h>
+#include <rsb/Factory.h>
+#include <rsb/converter/UnambiguousConverterMap.h>
+#include <rsb/converter/IntegerConverter.h>
+#include "../../util.hpp"
+
 #ifndef RTT_VERSION_GTE
   #define RTT_VERSION_GTE(major,minor,patch) \
       ((RTT_VERSION_MAJOR > major) || (RTT_VERSION_MAJOR == major && \
@@ -92,7 +99,52 @@ class OutgoingChannelElement: public OutgoingChannelElementBase,
 public:
     OutgoingChannelElement(RTT::base::PortInterface* port,
                            const RTT::ConnPolicy& policy)
-        : OutgoingChannelElementBase(port, policy) {
+    : OutgoingChannelElementBase(port, policy) {
+        
+    //     this->act->addPublisher(this);
+    //     this->act->start();
+
+        double period = 0;
+        if (policy.name_id.rfind("#", 0) == 0) {
+            // we have to deal with a timed connection
+            std::string transform_str = policy.name_id;
+            transform_str.erase(0,1);
+
+            size_t found = transform_str.find("#"); 
+            if (found != std::string::npos) {
+                // get substring and convert to double
+                period = std::stod(transform_str.substr(0, found));
+                // erase substring plus last # to get the real name
+                transform_str.erase(0,found+1);
+            } else {
+                RTT::log(RTT::Error)
+                << "Something cannot be parsed regarding " << policy.name_id << ": `"
+                <<  displayNameForPort(port)
+                << "' on scope " << transform_str << " !!!!!!!!!!!!!!!!!!"
+                << RTT::endlog();
+            }
+            this->scope = transform_str;
+        } else {
+            this->scope = policy.name_id;
+        }
+        RTT::Logger::In in(std::string("OCE_") + this->scope.toString());
+
+        RTT::log(RTT::Info)
+            << "Creating RSB informer for port `"
+            <<  displayNameForPort(port)
+            << "' on scope " << this->scope
+            << RTT::endlog();
+
+        this->informer = rsb::getFactory().createInformer<rsb::AnyType>(this->scope);
+
+        act = RSBPublishActivity::Instance();
+        // act = boost::shared_ptr<RSBPublishActivity>(new RSBPublishActivity(displayNameForPort(port) + std::string("->") + this->scope.toString()));
+
+        act->setPublishPeriod(period);
+
+        if (period == 0.0) {
+            this->act->addPublisherAlways(this);
+        }
         this->act->addPublisher(this);
         this->act->start();
     }

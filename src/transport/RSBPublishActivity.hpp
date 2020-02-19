@@ -54,6 +54,9 @@ namespace rtt_rsbcomm {
         Publishers publishers;
         RTT::os::Mutex publishers_lock;
 
+        Publishers publishers_always;
+        RTT::os::Mutex publishers_always_lock;
+
         // RSBPublishActivity(const std::string& name);
 
         void loop();
@@ -70,6 +73,9 @@ namespace rtt_rsbcomm {
 
         void addPublisher(RSBPublisher* pub);
         void removePublisher(RSBPublisher* pub);
+
+        void addPublisherAlways(RSBPublisher* pub);
+        void removePublisherAlways(RSBPublisher* pub);
 
         void setPublishPeriod(double p);
         double getPublishPeriod();

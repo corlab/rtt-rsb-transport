@@ -23,6 +23,11 @@ namespace rtt_rsbcomm {
                     }
                 }
                 this->last_triggered_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
+            } else {
+                os::MutexLock lock(publishers_always_lock);
+                for(iterator it = publishers_always.begin(); it != publishers_always.end(); ++it) {
+                    (*it)->publish();
+                }
             }
         }
 
@@ -46,6 +51,18 @@ namespace rtt_rsbcomm {
             log(Info) << "Remove RSBPublisher" << endlog();
             os::MutexLock lock(publishers_lock);
             publishers.erase(pub);
+        }
+
+        void RSBPublishActivity::addPublisherAlways(RSBPublisher* pub) {
+            log(Info) << "Add RSBPublisher that always publishes" << endlog();
+            os::MutexLock lock(publishers_always_lock);
+            publishers_always.insert(pub);
+        }
+
+        void RSBPublishActivity::removePublisherAlways(RSBPublisher* pub) {
+            log(Info) << "Remove RSBPublisher that always publishes" << endlog();
+            os::MutexLock lock(publishers_always_lock);
+            publishers_always.erase(pub);
         }
 
         RSBPublishActivity::~RSBPublishActivity() {
