@@ -93,6 +93,8 @@ public:
     OutgoingChannelElement(RTT::base::PortInterface* port,
                            const RTT::ConnPolicy& policy)
         : OutgoingChannelElementBase(port, policy) {
+        this->act->addPublisher(this);
+        this->act->start();
     }
 
     virtual ~OutgoingChannelElement() {}
@@ -133,15 +135,15 @@ public:
      * @return true if publishing succeeded
      */
     bool signal() {
-        if (act->getPublishPeriod() > 0.0) {
-            double tmp_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
-            if ((tmp_time - this->last_triggered_time) > act->getPublishPeriod()) {
-                act->trigger();
-                this->last_triggered_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
-            }
-        } else {
+        // if (act->getPublishPeriod() > 0.0) {
+        //     double tmp_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
+        //     if ((tmp_time - this->last_triggered_time) > act->getPublishPeriod()) {
+        //         act->trigger();
+        //         this->last_triggered_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
+        //     }
+        // } else {
             act->trigger();
-        }
+        // }
         return true;
     }
 

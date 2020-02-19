@@ -46,9 +46,20 @@ target_link_libraries(rtt-rsb-socket-transport
 # Scope service plugin
 
 orocos_service(rtt-rsb-scope-service
-                transport/ConnPolicyTimed.cpp
+               transport/ConnPolicyTimed.cpp
                scope/ScopeService.cpp)
 
 target_link_libraries(rtt-rsb-scope-service
                       ${RSB_LIBRARIES}
                       rtt-rsb-socket-transport)
+
+# Orocos Component
+
+orocos_component(rtt-system-logging
+                component/SystemLoggingHC.cpp)
+
+set_target_properties(rtt-system-logging PROPERTIES COMPILE_DEFINITIONS RTT_COMPONENT)
+
+target_link_libraries(rtt-system-logging ${EIGEN3_LIBRARIES} ${OROCOS-RTT_LIBRARIES} ${USE_OROCOS_LIBRARIES} ${RST-RT_LIBRARIES})
+
+orocos_generate_package()

@@ -8,26 +8,32 @@ namespace rtt_rsbcomm {
         RSBPublishActivity::weak_ptr RSBPublishActivity::rsb_pub_act;
 
         RSBPublishActivity::RSBPublishActivity(const std::string& name)
-        : Activity(ORO_SCHED_RT, RTT::os::LowestPriority, 0.0, 0, name), publish_period(0.0) {
+        : Activity(ORO_SCHED_RT, RTT::os::LowestPriority, 0.0, 7, 0, name), publish_period(0.0) {
             Logger::In in(name);
             log(Info) << "Creating RSBPublishActivity: " << name << endlog();
+            this->last_triggered_time = 0.0;
         }
 
         void RSBPublishActivity::loop() {
-            os::MutexLock lock(publishers_lock);
-            for(iterator it = publishers.begin(); it != publishers.end(); ++it) {
-                (*it)->publish();
+            if ((((1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks())) - this->last_triggered_time) > this->publish_period) || (this->publish_period == 0.0)) {
+                {
+                    os::MutexLock lock(publishers_lock);
+                    for(iterator it = publishers.begin(); it != publishers.end(); ++it) {
+                        (*it)->publish();
+                    }
+                }
+                this->last_triggered_time = 1E-9 * RTT::os::TimeService::ticks2nsecs(RTT::os::TimeService::Instance()->getTicks());
             }
         }
 
         RSBPublishActivity::shared_ptr RSBPublishActivity::Instance() {
-        shared_ptr ret = rsb_pub_act.lock();
-        if ( !ret ) {
-            ret.reset(new RSBPublishActivity("RSBPublishActivity"));
-            rsb_pub_act = ret;
-            ret->start();
-        }
-        return ret;
+            shared_ptr ret = rsb_pub_act.lock();
+            if ( !ret ) {
+                ret.reset(new RSBPublishActivity("RSBPublishActivity"));
+                rsb_pub_act = ret;
+                ret->start();
+            }
+            return ret;
         }
 
         void RSBPublishActivity::addPublisher(RSBPublisher* pub) {
@@ -50,7 +56,9 @@ namespace rtt_rsbcomm {
 
         void RSBPublishActivity::setPublishPeriod(double p) {
             // this->setPeriod(p);
-            this->publish_period = p;
+            if (this->publish_period == 0.0) {
+                this->publish_period = p;
+            }
         }
 
         double RSBPublishActivity::getPublishPeriod() {

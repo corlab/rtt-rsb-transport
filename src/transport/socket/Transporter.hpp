@@ -117,8 +117,13 @@ protected:
             RTT::log(RTT::Error) << "Pull connections are not supported by the RSB message transport." << RTT::endlog();
             return RTT::base::ChannelElementBase::shared_ptr();
         }
+        
+        // RTT::OutputPort<T>* output_port = static_cast<RTT::OutputPort<T>*>(port);
+        // T tmp_sample = output_port->getLastWrittenValue();
 
-        RTT::base::ChannelElementBase::shared_ptr buf(RTT::internal::ConnFactory::buildDataStorage<T>(policy));
+        // RTT::base::OutputPortInterface* output_port_if = static_cast<RTT::base::OutputPortInterface>(port);
+
+        RTT::base::ChannelElementBase::shared_ptr buf(RTT::internal::ConnFactory::buildDataStorage<T>(policy/*, output_port->getDataSource()*/));
         RTT::base::ChannelElementBase::shared_ptr tmp(new OutgoingChannelElement<T>(port, policy));
 
         if (!buf) {

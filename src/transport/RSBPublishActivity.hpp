@@ -75,6 +75,8 @@ namespace rtt_rsbcomm {
         double getPublishPeriod();
         double publish_period;
 
+        double last_triggered_time;
+
         ~RSBPublishActivity();
 
     };//class
